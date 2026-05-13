@@ -68,5 +68,7 @@ t_coder 	*heap_peek(t_heap *heap);
 void 		heap_pop(t_heap *heap, t_data *data);
 bool    	simulation_stop(t_data *data);
 void 		heap_push(t_heap *heap, t_coder *coder, t_data *data);
+void 		heap_take(t_dongle *dongle, t_coder *coder);
+
 
 #endif

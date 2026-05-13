@@ -34,3 +34,8 @@ int	check_args(int ac, char **av)
 		return (printf("Error: scheduler must be fifo or edf\n"), 0);
 	return (1);
 }
+
+int main()
+{
+	printf("ntm\n");
+}
