@@ -6,7 +6,7 @@
 #    By: bastiangranier <bastiangranier@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/05 13:00:48 by bgranier          #+#    #+#              #
-#    Updated: 2026/05/07 13:02:56 by bastiangran      ###   ########.fr        #
+#    Updated: 2026/05/13 12:34:54 by bastiangran      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ SRC = main.c \
 		monitor.c \
 		time.c \
 		routine.c \
+		utils.c \
 
 OBJ = $(SRC:.c=.o)
 
