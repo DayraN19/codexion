@@ -60,15 +60,23 @@ typedef struct s_data {
     t_dongle        *dongles;           // Tableau de tous les dongles
 } t_data;
 
-// Prototypes (à compléter selon tes besoins)
-long long   get_time(void);
-int         heap_compare(t_coder *a, t_coder *b, t_data *data);
-void 		heap_swap(t_heap *heap, int i, int j);
-t_coder 	*heap_peek(t_heap *heap);
-void 		heap_pop(t_heap *heap, t_data *data);
-bool    	simulation_stop(t_data *data);
-void 		heap_push(t_heap *heap, t_coder *coder, t_data *data);
-void 		heap_take(t_dongle *dongle, t_coder *coder);
 
+void        heap_swap(t_heap *heap, int i, int j);
+int         heap_compare(t_coder *a, t_coder *b, t_data *data);
+void        heap_push(t_heap *heap, t_coder *coder, t_data *data);
+void        heap_pop(t_heap *heap, t_data *data);
+t_coder     *heap_peek(t_heap *heap);
+void        heap_take(t_dongle *dongle, t_coder *coder);
+
+int         init_all(t_data *data, char **av);
+void        cleanup(t_data *data);
+
+long long   get_time(void);
+void        smart_sleep(long long time_to_wait, t_data *data);
+bool        simulation_stop(t_data *data);
+
+void        *coder_routine(void *ptr);
+void        *monitor_routine(void *ptr);
+void        print_status(t_coder *coder, char *status);
 
 #endif
