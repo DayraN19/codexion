@@ -79,4 +79,5 @@ void        *coder_routine(void *ptr);
 void        *monitor_routine(void *ptr);
 void        print_status(t_coder *coder, char *status);
 
+
 #endif

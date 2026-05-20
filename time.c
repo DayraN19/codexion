@@ -14,10 +14,9 @@ void	smart_sleep(long long time, t_data *data)
 	long long	start;
 
 	start = get_time();
-
 	while (get_time() - start < time)
 	{
-		if (!data->t_compile)
+		if (simulation_stop(data))
 			break ;
 		usleep(500);
 	}

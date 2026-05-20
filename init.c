@@ -26,6 +26,7 @@ static int init_dongles(t_data *data)
 {
     for (int i = 0; i < data->nb_coders; i++)
     {
+        data->dongles[i].heap = NULL;
         data->dongles[i].id = i;
         data->dongles[i].available_at = 0;
         if (pthread_mutex_init(&data->dongles[i].mutex, NULL) != 0)
@@ -33,19 +34,20 @@ static int init_dongles(t_data *data)
         if (pthread_cond_init(&data->dongles[i].cond, NULL) != 0)
             return (1);
         
-        // Allocation du Heap pour chaque dongle
+        // 1. Allocation de la structure principale du tas
         data->dongles[i].heap = malloc(sizeof(t_heap));
         if (!data->dongles[i].heap)
             return (1);
-        data->dongles[i].heap->capacity = data->nb_coders;
+        
+        // 2. ALLOCATION CRUCIALE : Le tableau de pointeurs interne du tas
         data->dongles[i].heap->size = 0;
-        data->dongles[i].heap->data = malloc(sizeof(t_coder *) * data->nb_coders);
+        data->dongles[i].heap->capacity = data->nb_coders + 5;
+        data->dongles[i].heap->data = malloc(sizeof(t_coder *) * data->dongles[i].heap->capacity);
         if (!data->dongles[i].heap->data)
             return (1);
     }
     return (0);
 }
-
 static void init_coders(t_data *data)
 {
     for (int i = 0; i < data->nb_coders; i++)
@@ -64,6 +66,10 @@ static void init_coders(t_data *data)
 
 int init_all(t_data *data, char **av)
 {
+    // Sécurité anti-leak pour le cleanup
+    data->coders = NULL;
+    data->dongles = NULL;
+
     data->nb_coders = atoi(av[1]);
     data->t_burnout = atoll(av[2]);
     data->t_compile = atoll(av[3]);
@@ -89,6 +95,9 @@ int init_all(t_data *data, char **av)
     data->dongles = malloc(sizeof(t_dongle) * data->nb_coders);
     if (!data->coders || !data->dongles)
         return (1);
+
+    for (int i = 0; i < data->nb_coders; i++)
+        data->dongles[i].heap = NULL;
 
     if (init_dongles(data) != 0)
         return (1);

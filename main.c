@@ -32,12 +32,19 @@ int main(int ac, char **av)
     }
     // On attend d'abord que le monitor détecte une fin (mort ou objectif atteint)
     pthread_join(monitor, NULL);
-    // On attend ensuite que tous les codeurs s'arrêtent suite au signal du monitor
+    // CORRECTION : On réveille de force tous les codeurs qui dorment pour qu'ils s'arrêtent
+    for (int i = 0; i < data.nb_coders; i++)
+    {
+        pthread_mutex_lock(&data.dongles[i].mutex);
+        pthread_cond_broadcast(&data.dongles[i].cond);
+        pthread_mutex_unlock(&data.dongles[i].mutex);
+    }
+
+    // On attend ensuite proprement que tous les codeurs s'arrêtent
     for (int i = 0; i < data.nb_coders; i++)
     {
         pthread_join(data.coders[i].thread, NULL);
     }
-    // Libération propre de la mémoire
     cleanup(&data);
     return (0);
 }
