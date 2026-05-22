@@ -34,12 +34,10 @@ static int init_dongles(t_data *data)
         if (pthread_cond_init(&data->dongles[i].cond, NULL) != 0)
             return (1);
         
-        // 1. Allocation de la structure principale du tas
         data->dongles[i].heap = malloc(sizeof(t_heap));
         if (!data->dongles[i].heap)
             return (1);
         
-        // 2. ALLOCATION CRUCIALE : Le tableau de pointeurs interne du tas
         data->dongles[i].heap->size = 0;
         data->dongles[i].heap->capacity = data->nb_coders + 5;
         data->dongles[i].heap->data = malloc(sizeof(t_coder *) * data->dongles[i].heap->capacity);
@@ -48,17 +46,17 @@ static int init_dongles(t_data *data)
     }
     return (0);
 }
+
 static void init_coders(t_data *data)
 {
     for (int i = 0; i < data->nb_coders; i++)
     {
-        data->coders[i].id = i + 1; // ID de 1 à N pour les logs
+        data->coders[i].id = i + 1;
         data->coders[i].nb_compiles = 0;
         data->coders[i].last_compile_start = data->start_time;
         data->coders[i].request_time = 0;
         data->coders[i].data = data;
         
-        // Règle de la table ronde : modulo pour le voisin de droite
         data->coders[i].left_dongle = &data->dongles[i];
         data->coders[i].right_dongle = &data->dongles[(i + 1) % data->nb_coders];
     }
@@ -66,7 +64,6 @@ static void init_coders(t_data *data)
 
 int init_all(t_data *data, char **av)
 {
-    // Sécurité anti-leak pour le cleanup
     data->coders = NULL;
     data->dongles = NULL;
 
@@ -91,17 +88,16 @@ int init_all(t_data *data, char **av)
     if (pthread_mutex_init(&data->dead_mutex, NULL) != 0)
         return (1);
 
-    data->coders = malloc(sizeof(t_coder) * data->nb_coders);
     data->dongles = malloc(sizeof(t_dongle) * data->nb_coders);
-    if (!data->coders || !data->dongles)
+    if (!data->dongles)
         return (1);
-
-    for (int i = 0; i < data->nb_coders; i++)
-        data->dongles[i].heap = NULL;
-
     if (init_dongles(data) != 0)
         return (1);
-        
+
+    data->coders = malloc(sizeof(t_coder) * data->nb_coders);
+    if (!data->coders)
+        return (1);
     init_coders(data);
+
     return (0);
 }
