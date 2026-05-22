@@ -11,7 +11,7 @@ void heap_swap(t_heap *heap, int i, int j)
 
 int heap_compare(t_coder *a, t_coder *b, t_data *data)
 {
-    if (data->scheduler == FIFO)
+    if(data->scheduler == FIFO)
     {
         if (a->request_time < b->request_time)
             return (1);
@@ -19,7 +19,7 @@ int heap_compare(t_coder *a, t_coder *b, t_data *data)
             return (0);
         return (a->id < b->id);
     }
-    else // EDF (Earliest Deadline First)
+    else
     {
         if (a->last_compile_start < b->last_compile_start)
             return (1);
@@ -62,21 +62,17 @@ void heap_pop(t_heap *heap, t_data *data)
 
     if (heap->size <= 0)
         return ;
-
     heap->size--;
     heap->data[0] = heap->data[heap->size];
-
     while (1)
     {
         smallest = i;
         left = (2 * i) + 1;
         right = (2 * i) + 2;
-
         if (left < heap->size && heap_compare(heap->data[left], heap->data[smallest], data))
             smallest = left;
         if (right < heap->size && heap_compare(heap->data[right], heap->data[smallest], data))
             smallest = right;
-
         if (smallest != i)
         {
             heap_swap(heap, i, smallest);

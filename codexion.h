@@ -10,54 +10,54 @@
 # include <stdbool.h>
 
 typedef enum e_sched {
-    FIFO,
-    EDF
+	FIFO,
+	EDF
 } t_sched;
 
 struct s_data;
 
 typedef struct s_coder {
-    int             id;
-    int             nb_compiles;
-    long long       last_compile_start; // Pour le burnout et l'EDF
-    long long       request_time;       // Pour le FIFO (le "ticket" d'entrée)
-    pthread_t       thread;
-    struct s_dongle *left_dongle;
-    struct s_dongle *right_dongle;
-    struct s_data   *data;              // Lien vers les paramètres globaux
+	int             id;
+	int             nb_compiles;
+	long long       last_compile_start;
+	long long       request_time;
+	pthread_t       thread;
+	struct s_dongle *left_dongle;
+	struct s_dongle *right_dongle;
+	struct s_data   *data;
 } t_coder;
 
 typedef struct s_heap {
-    t_coder         **data;             // Tableau de pointeurs
-    int             size;
-    int             capacity;
+	t_coder         **data;
+	int             size;
+	int             capacity;
 } t_heap;
 
 typedef struct s_dongle {
-    int             id;
-    pthread_mutex_t mutex;
-    pthread_cond_t  cond;
-    long long       available_at;       // Pour gérer le cooldown
-    t_heap          *heap;              // La file d'attente de ce dongle
+	int             id;
+	pthread_mutex_t mutex;
+	pthread_cond_t  cond;
+	long long       available_at;
+	t_heap          *heap;
 } t_dongle;
 
 typedef struct s_data {
-    int             nb_coders;
-    long long       t_burnout;
-    long long       t_compile;
-    long long       t_debug;
-    long long       t_refactor;
-    int             nb_compiles_req;
-    long long       t_cooldown;
-    t_sched         scheduler;          // Ton fameux scheduler (FIFO ou EDF)
-    
-    long long       start_time;
-    bool            is_dead;            // Flag pour arrêter la simulation
-    pthread_mutex_t log_mutex;          // Pour protéger les printf
-    pthread_mutex_t dead_mutex;         // Pour protéger le flag is_dead
-    
-    t_coder         *coders;            // Tableau de tous les codeurs
-    t_dongle        *dongles;           // Tableau de tous les dongles
+	int             nb_coders;
+	long long       t_burnout;
+	long long       t_compile;
+	long long       t_debug;
+	long long       t_refactor;
+	int             nb_compiles_req;
+	long long       t_cooldown;
+	t_sched         scheduler;
+	
+	long long       start_time;
+	bool            is_dead;
+	pthread_mutex_t log_mutex;
+	pthread_mutex_t dead_mutex;
+	
+	t_coder         *coders;
+	t_dongle        *dongles;
 } t_data;
 
 
