@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/26 12:24:17 by bgranier          #+#    #+#             */
+/*   Updated: 2026/05/26 12:25:09 by bgranier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 long long	get_time(void)
@@ -5,7 +17,6 @@ long long	get_time(void)
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 

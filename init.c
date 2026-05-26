@@ -3,40 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bastiangranier <bastiangranier@student.    +#+  +:+       +#+        */
+/*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 11:22:58 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 10:56:04 by bastiangran      ###   ########.fr       */
+/*   Updated: 2026/05/26 12:00:45 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	cleanup(t_data *data)
+static int	init_dongle_heap(t_dongle *dongle, int nb_coders)
 {
-	if (data->dongles)
-	{
-		for (int i = 0; i < data->nb_coders; i++)
-		{
-			pthread_mutex_destroy(&data->dongles[i].mutex);
-			pthread_cond_destroy(&data->dongles[i].cond);
-			if (data->dongles[i].heap)
-			{
-				free(data->dongles[i].heap->data);
-				free(data->dongles[i].heap);
-			}
-		}
-		free(data->dongles);
-	}
-	if (data->coders)
-		free(data->coders);
-	pthread_mutex_destroy(&data->log_mutex);
-	pthread_mutex_destroy(&data->dead_mutex);
+	dongle->heap = malloc(sizeof(t_heap));
+	if (!dongle->heap)
+		return (1);
+	dongle->heap->size = 0;
+	dongle->heap->capacity = nb_coders + 5;
+	dongle->heap->data = malloc(sizeof(t_coder *)
+			* dongle->heap->capacity);
+	if (!dongle->heap->data)
+		return (1);
+	return (0);
 }
 
 static int	init_dongles(t_data *data)
 {
-	for (int i = 0; i < data->nb_coders; i++)
+	int	i;
+
+	i = 0;
+	while (i < data->nb_coders)
 	{
 		data->dongles[i].heap = NULL;
 		data->dongles[i].id = i;
@@ -45,40 +40,36 @@ static int	init_dongles(t_data *data)
 			return (1);
 		if (pthread_cond_init(&data->dongles[i].cond, NULL) != 0)
 			return (1);
-		
-		data->dongles[i].heap = malloc(sizeof(t_heap));
-		if (!data->dongles[i].heap)
+		if (init_dongle_heap(&data->dongles[i], data->nb_coders) != 0)
 			return (1);
-		
-		data->dongles[i].heap->size = 0;
-		data->dongles[i].heap->capacity = data->nb_coders + 5;
-		data->dongles[i].heap->data = malloc(sizeof(t_coder *) * data->dongles[i].heap->capacity);
-		if (!data->dongles[i].heap->data)
-			return (1);
+		i++;
 	}
 	return (0);
 }
 
 static void	init_coders(t_data *data)
 {
-	for (int i = 0; i < data->nb_coders; i++)
+	int	i;
+
+	i = 0;
+	while (i < data->nb_coders)
 	{
 		data->coders[i].id = i + 1;
 		data->coders[i].nb_compiles = 0;
 		data->coders[i].last_compile_start = data->start_time;
 		data->coders[i].request_time = 0;
 		data->coders[i].data = data;
-		
 		data->coders[i].left_dongle = &data->dongles[i];
-		data->coders[i].right_dongle = &data->dongles[(i + 1) % data->nb_coders];
+		data->coders[i].right_dongle = &data->dongles[(i + 1)
+			% data->nb_coders];
+		i++;
 	}
 }
 
-int	init_all(t_data *data, char **av)
+static void	parse_args(t_data *data, char **av)
 {
 	data->coders = NULL;
 	data->dongles = NULL;
-
 	data->nb_coders = atoi(av[1]);
 	data->t_burnout = ft_atoll(av[2]);
 	data->t_compile = ft_atoll(av[3]);
@@ -92,6 +83,11 @@ int	init_all(t_data *data, char **av)
 		data->scheduler = EDF;
 	data->is_dead = false;
 	data->start_time = get_time();
+}
+
+int	init_all(t_data *data, char **av)
+{
+	parse_args(data, av);
 	if (pthread_mutex_init(&data->log_mutex, NULL) != 0)
 		return (1);
 	if (pthread_mutex_init(&data->dead_mutex, NULL) != 0)
