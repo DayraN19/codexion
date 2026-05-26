@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 11:22:58 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 12:00:45 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/26 13:02:10 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,13 @@ static void	parse_args(t_data *data, char **av)
 	data->t_cooldown = ft_atoll(av[7]);
 	if (strcmp(av[8], "fifo") == 0)
 		data->scheduler = FIFO;
-	else
+	else if (strcmp(av[8], "edf") == 0)
 		data->scheduler = EDF;
+	else
+	{
+		write(2, "Error: scheduler must be exactly 'fifo' or 'edf'\n", 49);
+		exit(1);
+	}
 	data->is_dead = false;
 	data->start_time = get_time();
 }

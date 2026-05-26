@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:22:36 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 12:22:37 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/26 13:02:20 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static void	handle_wait(t_coder *coder, t_dongle *first, t_dongle *second)
 	{
 		pthread_mutex_unlock(&second->mutex);
 		pthread_cond_wait(&first->cond, &first->mutex);
+		pthread_mutex_unlock(&first->mutex);
+		pthread_mutex_lock(&first->mutex);
 		pthread_mutex_lock(&second->mutex);
 	}
 	else if (heap_peek(second->heap) != coder)

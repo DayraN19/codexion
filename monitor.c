@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:15:08 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 12:18:01 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/26 12:33:18 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,17 @@
 static bool	check_all_compiles_reached(t_data *data)
 {
 	int	i;
+	int	current_compiles;
 
 	i = 0;
 	if (data->nb_compiles_req == -1)
 		return (false);
 	while (i < data->nb_coders)
 	{
-		if (data->coders[i].nb_compiles < data->nb_compiles_req)
+		pthread_mutex_lock(&data->dead_mutex);
+		current_compiles = data->coders[i].nb_compiles;
+		pthread_mutex_unlock(&data->dead_mutex);
+		if (current_compiles < data->nb_compiles_req)
 			return (false);
 		i++;
 	}
