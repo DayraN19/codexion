@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bastiangranier <bastiangranier@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 11:22:58 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/22 11:23:48 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/26 10:56:04 by bastiangran      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,12 @@ int	init_all(t_data *data, char **av)
 	data->dongles = NULL;
 
 	data->nb_coders = atoi(av[1]);
-	data->t_burnout = atoll(av[2]);
-	data->t_compile = atoll(av[3]);
-	data->t_debug = atoll(av[4]);
-	data->t_refactor = atoll(av[5]);
+	data->t_burnout = ft_atoll(av[2]);
+	data->t_compile = ft_atoll(av[3]);
+	data->t_debug = ft_atoll(av[4]);
+	data->t_refactor = ft_atoll(av[5]);
 	data->nb_compiles_req = atoi(av[6]);
-	data->t_cooldown = atoll(av[7]);
+	data->t_cooldown = ft_atoll(av[7]);
 	if (strcmp(av[8], "fifo") == 0)
 		data->scheduler = FIFO;
 	else

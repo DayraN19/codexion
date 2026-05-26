@@ -78,6 +78,6 @@ bool        simulation_stop(t_data *data);
 void        *coder_routine(void *ptr);
 void        *monitor_routine(void *ptr);
 void        print_status(t_coder *coder, char *status);
-
+long long 	ft_atoll(const char *str);
 
 #endif
