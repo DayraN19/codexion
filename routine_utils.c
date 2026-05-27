@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:22:36 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 13:02:20 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/27 11:23:52 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,6 @@ void	take_two_dongles(t_coder *coder)
 	heap_push(second->heap, coder, coder->data);
 	if (wait_loop(coder, first, second))
 		return ;
-	heap_pop(first->heap, coder->data);
-	heap_pop(second->heap, coder->data);
+	pthread_mutex_unlock(&second->mutex);
+	pthread_mutex_unlock(&first->mutex);
 }

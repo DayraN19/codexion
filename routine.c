@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:22:28 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 12:51:16 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/27 11:22:37 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,28 @@ void	print_status(t_coder *coder, char *status)
 
 void	relacher_les_deux_dongles(t_coder *coder)
 {
+	t_dongle	*first;
+	t_dongle	*second;
 	long long	now;
 
+	first = coder->left_dongle;
+	second = coder->right_dongle;
+	if (first->id > second->id)
+	{
+		first = coder->right_dongle;
+		second = coder->left_dongle;
+	}
+	pthread_mutex_lock(&first->mutex);
+	pthread_mutex_lock(&second->mutex);
 	now = get_time();
 	coder->left_dongle->available_at = now + coder->data->t_cooldown;
 	coder->right_dongle->available_at = now + coder->data->t_cooldown;
-	pthread_mutex_unlock(&coder->left_dongle->mutex);
-	pthread_mutex_unlock(&coder->right_dongle->mutex);
-	pthread_cond_broadcast(&coder->left_dongle->cond);
-	pthread_cond_broadcast(&coder->right_dongle->cond);
+	heap_pop(first->heap, coder->data);
+	heap_pop(second->heap, coder->data);
+	pthread_cond_broadcast(&first->cond);
+	pthread_cond_broadcast(&second->cond);
+	pthread_mutex_unlock(&second->mutex);
+	pthread_mutex_unlock(&first->mutex);
 }
 
 static int	compile_and_work(t_coder *coder)
@@ -48,7 +61,9 @@ static int	compile_and_work(t_coder *coder)
 	coder->last_compile_start = get_time();
 	pthread_mutex_unlock(&coder->data->dead_mutex);
 	smart_sleep(coder->data->t_compile, coder->data);
+	pthread_mutex_lock(&coder->data->dead_mutex);
 	coder->nb_compiles++;
+	pthread_mutex_unlock(&coder->data->dead_mutex);
 	relacher_les_deux_dongles(coder);
 	if (coder->data->nb_compiles_req != -1
 		&& coder->nb_compiles >= coder->data->nb_compiles_req)
