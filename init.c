@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 11:22:58 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 13:02:10 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/29 14:01:01 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ static void	init_coders(t_data *data)
 		data->coders[i].id = i + 1;
 		data->coders[i].nb_compiles = 0;
 		data->coders[i].last_compile_start = data->start_time;
+		data->dongles[i].is_used = 0;
 		data->coders[i].request_time = 0;
 		data->coders[i].data = data;
 		data->coders[i].left_dongle = &data->dongles[i];

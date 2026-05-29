@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:04:32 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/26 12:23:56 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/29 14:00:36 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct s_dongle
 	pthread_mutex_t	mutex;
 	pthread_cond_t	cond;
 	long long		available_at;
+	int				is_used;
 	t_heap			*heap;
 }	t_dongle;
 

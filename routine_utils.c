@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:22:36 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/27 11:23:52 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/29 14:09:23 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	handle_wait(t_coder *coder, t_dongle *first, t_dongle *second)
 {
-	if (heap_peek(first->heap) != coder)
+	if (heap_peek(first->heap) != coder || first->is_used)
 	{
 		pthread_mutex_unlock(&second->mutex);
 		pthread_cond_wait(&first->cond, &first->mutex);
@@ -22,7 +22,7 @@ static void	handle_wait(t_coder *coder, t_dongle *first, t_dongle *second)
 		pthread_mutex_lock(&first->mutex);
 		pthread_mutex_lock(&second->mutex);
 	}
-	else if (heap_peek(second->heap) != coder)
+	else if (heap_peek(second->heap) != coder || second->is_used)
 	{
 		pthread_mutex_unlock(&first->mutex);
 		pthread_cond_wait(&second->cond, &second->mutex);
@@ -34,7 +34,7 @@ static void	handle_wait(t_coder *coder, t_dongle *first, t_dongle *second)
 	{
 		pthread_mutex_unlock(&second->mutex);
 		pthread_mutex_unlock(&first->mutex);
-		usleep(1000);
+		usleep(200);
 		pthread_mutex_lock(&first->mutex);
 		pthread_mutex_lock(&second->mutex);
 	}
@@ -44,16 +44,22 @@ static int	wait_loop(t_coder *coder, t_dongle *first, t_dongle *second)
 {
 	while (1)
 	{
-		if (heap_peek(first->heap) == coder
-			&& heap_peek(second->heap) == coder
-			&& get_time() >= first->available_at
-			&& get_time() >= second->available_at)
-			break ;
 		if (simulation_stop(coder->data))
 		{
 			pthread_mutex_unlock(&second->mutex);
 			pthread_mutex_unlock(&first->mutex);
 			return (1);
+		}
+		if (heap_peek(first->heap) == coder
+			&& heap_peek(second->heap) == coder
+			&& !first->is_used
+			&& !second->is_used
+			&& get_time() >= first->available_at
+			&& get_time() >= second->available_at)
+		{
+			first->is_used = 1;
+			second->is_used = 1;
+			break ;
 		}
 		handle_wait(coder, first, second);
 	}

@@ -6,7 +6,7 @@
 /*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:22:28 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/27 11:22:37 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/05/29 14:09:55 by bgranier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,10 @@ void	relacher_les_deux_dongles(t_coder *coder)
 	pthread_mutex_lock(&first->mutex);
 	pthread_mutex_lock(&second->mutex);
 	now = get_time();
-	coder->left_dongle->available_at = now + coder->data->t_cooldown;
-	coder->right_dongle->available_at = now + coder->data->t_cooldown;
+	first->available_at = now + coder->data->t_cooldown;
+	second->available_at = now + coder->data->t_cooldown;
+	first->is_used = 0;
+	second->is_used = 0;
 	heap_pop(first->heap, coder->data);
 	heap_pop(second->heap, coder->data);
 	pthread_cond_broadcast(&first->cond);
