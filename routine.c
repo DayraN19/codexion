@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bgranier <bgranier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bastiangranier <bastiangranier@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:22:28 by bgranier          #+#    #+#             */
-/*   Updated: 2026/05/29 14:09:55 by bgranier         ###   ########.fr       */
+/*   Updated: 2026/06/01 14:51:48 by bastiangran      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ static int	compile_and_work(t_coder *coder)
 	take_two_dongles(coder);
 	if (simulation_stop(coder->data))
 		return (1);
+	print_status(coder, "has taken a dongle");
+	print_status(coder, "has taken a dongle");
 	print_status(coder, "is compiling");
 	pthread_mutex_lock(&coder->data->dead_mutex);
 	coder->last_compile_start = get_time();
